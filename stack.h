@@ -1,8 +1,11 @@
 // C Stack implementation header
 
+// Change this to change the type of the stack.
+typedef unsigned int sType;
+
 struct stack {
 	unsigned int arrLength, stackSize;
-	unsigned int* array;
+	sType* array;
 };
 
 typedef struct stack* stack;
@@ -17,12 +20,13 @@ unsigned int stack_size(stack);
 int stack_empty(stack);
 
 // returns the top of the stack without removing the element
-// 0 is returned if stack is empty
-unsigned int stack_top(stack);
+sType stack_top(stack);
 
 // pushes the element onto the stack, returning 1 if successful, and 0 otherwise
-int stack_push(stack, unsigned int);
+int stack_push(stack, sType);
 
 // returns the element on the top of the stack and removes it. 
-// 0 is returned if unsuccessful
-unsigned int stack_pop(stack);
+sType stack_pop(stack);
+
+// destructor
+void stack_destroy(stack);
