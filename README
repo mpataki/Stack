@@ -1,0 +1,4 @@
+README
+
+This is a C stack implementation for use in the os161 kernel.
+For now, it will be implemented for use only with unsigned ints, as this will suffice for what we need.
