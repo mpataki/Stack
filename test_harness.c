@@ -26,6 +26,19 @@ int main(void){
 		assert(stack_size(s) == i+1);
 	}
 
+	// test destroying a stack with a bunch of elements
+	stack_destroy(s);
+	s=stack_init();
+
+	for (i=0; i<55; i++){
+		assert(stack_push(s, i) == 1);
+		assert(stack_size(s) == i+1);
+	}
+
+	for (i=0; i<55; i++){
+		assert(stack_pop(s) == 54-i);
+	}
+
 	stack_destroy(s);
 
 	return 0;
