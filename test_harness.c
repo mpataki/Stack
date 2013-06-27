@@ -3,7 +3,7 @@
 #include "stack.h"
 
 int main(void){
-	stack s;
+	stack* s;
 	s = stack_init();
 	assert(stack_empty(s));
 	assert(stack_size(s) == 0);

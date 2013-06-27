@@ -9,8 +9,8 @@
 #define INITIAL_ARRAY_SIZE 50
 
 // initialize a new stack
-stack stack_init(){
-	stack ret = malloc(sizeof(struct stack));
+stack* stack_init(){
+	stack* ret = malloc(sizeof(struct stack));
 	sType* arr = malloc(sizeof(sType)*INITIAL_ARRAY_SIZE);
 	ret->array = arr;
 	ret->arrLength = INITIAL_ARRAY_SIZE;
@@ -19,27 +19,27 @@ stack stack_init(){
 }
 
 // return the size of the stack;
-unsigned int stack_size(stack s){
+unsigned int stack_size(stack* s){
 	assert(s != NULL);
 	return s->stackSize;
 }
 
 // returns 1 if the stack is empty, and 0 otherwise
-int stack_empty(stack s){
+int stack_empty(stack* s){
 	assert(s != NULL);
 	return (s->stackSize == 0) ? 1 : 0;
 }
 
 // returns the top of the stack without removing the element
 // 0 is returned if stack is empty
-sType stack_top(stack s){
+sType stack_top(stack* s){
 	assert(s != NULL);
 	assert(s->stackSize != 0);
 	return s->array[s->stackSize - 1];
 }
 
 // pushes the element onto the stack, returning 1 if successful, and 0 otherwise
-int stack_push(stack s, sType elm){
+int stack_push(stack* s, sType elm){
 	assert(s != NULL);
 
 		// If need be, allocate new array.
@@ -62,7 +62,7 @@ int stack_push(stack s, sType elm){
 }
 
 // returns the element on the top of the stack and removes it. 
-sType stack_pop(stack s){
+sType stack_pop(stack* s){
 	assert(s != NULL);
 	assert(s->stackSize != 0);
 	return s->array[--(s->stackSize)];
@@ -70,7 +70,7 @@ sType stack_pop(stack s){
 
 // destructor
 // Assumes that the elements in the array need not be freed
-void stack_destroy(stack s){
+void stack_destroy(stack* s){
 	free(s->array);
 	free(s);
 }
