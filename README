@@ -1,3 +1,8 @@
 README
 
-This is a C stack implementation
+This is a stack implemented in C.
+All of the usual suspects one would expect are provided - see the .h file.
+
+First in last out
+
+The type of the stack is declared in the .h file as sType. Change this as required, but be warned that stack_destroy does not perform a deep destroy.
