@@ -45,7 +45,7 @@ int stack_push(stack* s, sType elm){
 		// If need be, allocate new array.
 	if (s->arrLength == s->stackSize){
 		sType* arr = malloc(sizeof(sType) * s->arrLength*2);
-		if (arr == NULL) return 0;	// If we have run out of space
+		if (arr == NULL) return 0;	// If we have run out of memory
 		unsigned int i;
 		for (i=0; i<s->arrLength; i++){
 			arr[i] = s->array[i];
