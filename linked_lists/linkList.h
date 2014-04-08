@@ -31,7 +31,8 @@ public:
   linkList() : top(NULL), bottom(NULL), iterator(NULL), length(0) {}
   ~linkList() {}
 
-  // insert
+  
+  /**************************** insert ****************************/
   void push_front(T& value) {
     listElement* new_elm = new listElement( value );
     if ( !new_elm ) throw linkListException( linkListException::NO_MEMORY );
@@ -81,7 +82,8 @@ public:
     length++;
   }
 
-  // remove
+  
+  /**************************** remove ****************************/
   void remove_front() {
     if ( !top ) throw linkListException(linkListException::REMOVE_FROM_EMPTY_LIST);
 
@@ -145,7 +147,8 @@ public:
     return true;
   }
 
-  // access
+  
+  /**************************** access ****************************/
   const listElement& get(){ return iterator->get_value(); }       // get value at iterator position
   const listElement& get_top(){ return top->get_value(); }        // does not change iterator position
   const listElement& get_bottom(){ return bottom->get_value(); }  // does not change iterator position
