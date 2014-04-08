@@ -1,8 +1,16 @@
 #ifndef LINK_LIST_H
 #define LINK_LIST_H
 
+// (Simple) Excpetion type:
+class linkListException{
+public:
+	enum Type { PAST_END } type;
+	linkListException(Type type) : type(type) {};
+};
+
 template<class T> class linkList {
 	
+	// lower level list element
 	class listElement{
 		const T& value;
 		listElement* next;
@@ -30,34 +38,29 @@ template<class T> class linkList {
 	
 	unsigned int length;
 
-	// Excpetion types:
-	/* TO DO */
-
 public:
 	linkList() : top(NULL), bottom(NULL), length(0) {}
 	~linkList();
 
 	// insert
 	void push_front();
-	void push_after();
+	void push_after();							// push after current iterator
 	void push_back();
 
 	// remove
 	void remove_front();
-	void remove_after();
+	void remove_after();						// remove after current iterator
 	void remove_back();
-
-	// lookup
-	const T& find(const T& value);
-	const T& find(unsigned int index);
 
 	// go to the [first, next, last] element
 	void first();
-	void next();
+	bool next(); 										// true while not past the end of the list
 	void last();
 
 	// access
-	const listElement& getElement();
+	const listElement& get();				// get value at iterator position
+	const listElement& get_first();	// does not change iterator position
+	const listElement& get_last(); 	// does not change iterator position
 
 	unsigned int length() { return length }
 };
