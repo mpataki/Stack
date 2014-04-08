@@ -4,7 +4,7 @@
 // (Simple) Excpetion type:
 class linkListException{
 public:
-	enum Type { PAST_END } type;
+	enum Type { PAST_END, NO_MEMORY } type;
 	linkListException(Type type) : type(type) {};
 };
 
@@ -12,29 +12,74 @@ template<class T> class linkList {
 	
 	// lower level list element
 	class listElement{
-		const T& value;
+		T value;
 		listElement* next;
 
 	public:
-		listElement(const T& value, ) : value(value), next(NULL) {}
+		listElement( T& value ) : value(value), next(NULL) {}
 
-		listElement* 		next() const							{ return next; }
-		const T& 				value() const 						{ return value; }
-		void 						setNext(listElement* n) 	{ next = n; }
-		void 						setValue(T& v) 						{ value = v; }
+		listElement* 		get_next() const							{ return next; }
+		const T 				get_value() const 						{ return value; }
+		void 						set_next(listElement* n) 	{ next = n; }
+		void 						set_value(T v) 						{ value = v; }
 
 	} *top, *bottom, *iterator;
 	
 	unsigned int length;
 
 public:
-	linkList() : top(NULL), bottom(NULL), length(0) {}
-	~linkList();
+	linkList() : top(NULL), bottom(NULL), iterator(NULL), length(0) {}
+	~linkList() {}
 
 	// insert
-	void push_front();
-	void push_after();							// push after current iterator
-	void push_back();
+	void push_front(T& value) {
+		listElement* new_elm = new listElement( value );
+		if ( !new_elm ) throw linkListException( linkListException::NO_MEMORY );
+		
+		if ( !top ) {	// first insert
+			top = new_elm;
+			iterator = new_elm;
+			bottom = new_elm;
+		} else {
+			new_elm->set_next( top->get_next() );
+			top->set_next( new_elm );
+		}
+
+		length++;
+	}
+
+	// push after current iterator
+	void push_after(T& value) {
+		listElement* new_elm = new listElement( value );
+		if ( !new_elm ) throw linkListException( linkListException::NO_MEMORY );
+
+		if ( !iterator ) { // first insert
+			top = new_elm;
+			iterator = new_elm;
+			bottom = new_elm;
+		} else {
+			new_elm->set_next( iterator->get_next() );
+			iterator->set_next( new_elm );
+		}
+
+		length++;
+	}
+
+	void push_back(T& value) {
+		listElement* new_elm = new listElement( value );
+		if ( !new_elm ) throw linkListException( linkListException::NO_MEMORY );
+
+		if ( !bottom ) {	// first insert
+			top = new_elm;
+			iterator = new_elm;
+			bottom = new_elm;
+		} else {
+			bottom->set_next( new_elm );
+			bottom = new_elm;
+		}
+
+		length++;
+	}
 
 	// remove
 	void remove_front();
