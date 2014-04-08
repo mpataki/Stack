@@ -127,14 +127,21 @@ public:
   }
 
   // TO DO
-  // need a doubly linked list to do this properly
+  // need a doubly linked list to do this properly ( currently linear time )
+  // if iterator is on the bottom, set it to the new bottom
   void remove_back() {
     if ( !bottom ) throw linkListException(linkListException::REMOVE_FROM_EMPTY_LIST);
 
     listElement* to_delete = bottom;
 
-    if ( iterator == to_delete ) iterator = NULL;
-    bottom = NULL;
+    listElement* elm = top;
+    while (elm->get_next()) elm = elm->get_next();
+    bottom = elm;
+    
+    if ( iterator == to_delete ) iterator = elm;
+    if (top == to_delete ) top = NULL;
+
+    delete to_delete;
     length--;
   }
 
