@@ -18,21 +18,10 @@ template<class T> class linkList {
 	public:
 		listElement(const T& value, ) : value(value), next(NULL) {}
 
-		listElement* next() const{
-
-		}
-
-		const T& value() const {
-
-		}
-
-		void setNext() {
-
-		}
-
-		void setValue(T val) {
-
-		}
+		listElement* 		next() const							{ return next; }
+		const T& 				value() const 						{ return value; }
+		void 						setNext(listElement* n) 	{ next = n; }
+		void 						setValue(T& v) 						{ value = v; }
 
 	} *top, *bottom, *iterator;
 	
