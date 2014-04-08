@@ -4,7 +4,7 @@
 // (Simple) Excpetion type:
 class linkListException{
 public:
-	enum Type { PAST_END, NO_MEMORY } type;
+	enum Type { PAST_END, NO_MEMORY, REMOVE_FROM_EMPTY_LIST } type;
 	linkListException(Type type) : type(type) {};
 };
 
@@ -82,20 +82,73 @@ public:
 	}
 
 	// remove
-	void remove_front();
-	void remove_after();						// remove after current iterator
-	void remove_back();
+	void remove_front() {
+		if ( !top ) throw linkListException(linkListException::REMOVE_FROM_EMPTY_LIST);
 
-	// go to the [first, next, last] element
-	void first();
-	bool next(); 										// true while not past the end of the list
-	void last();
+		listElement* to_delete = top;
+		top = top->get_next();
+		if ( !top ) {
+			iterator = NULL;
+			bottom = NULL;
+		}
+		delete to_delete;
+		length--;
+	}
+
+	// remove current iterator positon
+	void remove() {
+		if ( !iterator ) throw linkListException(linkListException::REMOVE_FROM_EMPTY_LIST);
+
+		listElement* to_delete = iterator;
+		iterator = iterator->get_next();
+		if ( !iterator ) {
+			top = NULL;
+			bottom = NULL;
+		}
+		delete to_delete;
+		length--;		
+	}
+
+	// remove after current iterator
+	void remove_after() {
+		if ( !iterator ) throw linkListException(linkListException::REMOVE_FROM_EMPTY_LIST);
+		if ( !iterator->get_next() ) throw linkListException(linkListException::PAST_END);
+		
+		listElement* to_delete = iterator->get_next();
+		iterator->set_next( to_delete->get_next() );
+
+		if ( to_delete == bottom ) bottom = iterator;
+
+		delete to_delete;
+		
+		length--;
+	}
+
+	// TO DO
+	// need a doubly linked list to do this properly
+	void remove_back() {
+		if ( !bottom ) throw linkListException(linkListException::REMOVE_FROM_EMPTY_LIST);
+
+		listElement* to_delete = bottom;
+
+		if ( iterator == to_delete ) iterator = NULL;
+		bottom = NULL;
+		length--;
+	}
+
+	// go to the [top, bottom, next] element
+	void top() { iterator = top; }
+	void bottom() { iterator = bottom }
+	bool next(){ 										// true while not past the end of the list ( useful for loops )
+		if ( !iterator->get_next() ) return false;
+		iterator = iterator->get_next();
+		return true;
+	}
 
 	// access
-	const listElement& get();				// get value at iterator position
-	const listElement& get_first();	// does not change iterator position
-	const listElement& get_last(); 	// does not change iterator position
-
+	const listElement& get(){ return iterator->get_value(); }				// get value at iterator position
+	const listElement& get_top(){ return top->get_value(); }				// does not change iterator position
+	const listElement& get_bottom(){ return bottom->get_value(); }	// does not change iterator position
 	unsigned int length() { return length }
 };
 
