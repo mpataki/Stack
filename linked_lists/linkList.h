@@ -4,7 +4,7 @@
 // (Simple) Excpetion type:
 class linkListException {
 public:
-  enum Type { PAST_END, NO_MEMORY, REMOVE_FROM_EMPTY_LIST } type;
+  enum Type { PAST_END, NO_MEMORY, REMOVE_FROM_EMPTY_LIST, ACCESSED_EMPTY_LIST } type;
   linkListException(Type type) : type(type) {};
 };
 
@@ -18,17 +18,17 @@ template<class T> class linkList {
   public:
     listElement( T& value ) : value(value), next(NULL) {}
 
-    listElement*    get_next() const              { return next; }
-    const T         get_value() const             { return value; }
+    listElement*    get_next()                { return next; }
+    T&              get_value()               { return value; }
     void            set_next(listElement* n)  { next = n; }
     void            set_value(T v)            { value = v; }
 
-  } *m_top, *m_bottom, *iterator;
+  } *top, *bottom, *iterator;
   
   unsigned int m_length;
 
 public:
-  linkList() : m_top(NULL), m_bottom(NULL), iterator(NULL), m_length(0) {}
+  linkList() : top(NULL), bottom(NULL), iterator(NULL), m_length(0) {}
   ~linkList() {}
 
   
@@ -37,13 +37,13 @@ public:
     listElement* new_elm = new listElement( value );
     if ( !new_elm ) throw linkListException( linkListException::NO_MEMORY );
     
-    if ( !m_top ) { // first insert
-      m_top = new_elm;
+    if ( !top ) { // first insert
+      top = new_elm;
       iterator = new_elm;
-      m_bottom = new_elm;
+      bottom = new_elm;
     } else {
-      new_elm->set_next( m_top->get_next() );
-      m_top->set_next( new_elm );
+      new_elm->set_next( top->get_next() );
+      top->set_next( new_elm );
     }
 
     m_length++;
@@ -55,9 +55,9 @@ public:
     if ( !new_elm ) throw linkListException( linkListException::NO_MEMORY );
 
     if ( !iterator ) { // first insert
-      m_top = new_elm;
+      top = new_elm;
       iterator = new_elm;
-      m_bottom = new_elm;
+      bottom = new_elm;
     } else {
       new_elm->set_next( iterator->get_next() );
       iterator->set_next( new_elm );
@@ -70,13 +70,13 @@ public:
     listElement* new_elm = new listElement( value );
     if ( !new_elm ) throw linkListException( linkListException::NO_MEMORY );
 
-    if ( !m_bottom ) {  // first insert
-      m_top = new_elm;
+    if ( !bottom ) {  // first insert
+      top = new_elm;
       iterator = new_elm;
-      m_bottom = new_elm;
+      bottom = new_elm;
     } else {
-      m_bottom->set_next( new_elm );
-      m_bottom = new_elm;
+      bottom->set_next( new_elm );
+      bottom = new_elm;
     }
 
     m_length++;
@@ -85,13 +85,13 @@ public:
   
   /**************************** remove ****************************/
   void remove_front() {
-    if ( !m_top ) throw linkListException(linkListException::REMOVE_FROM_EMPTY_LIST);
+    if ( !top ) throw linkListException(linkListException::REMOVE_FROM_EMPTY_LIST);
 
-    listElement* to_delete = m_top;
-    m_top = m_top->get_next();
-    if ( !m_top ) {
+    listElement* to_delete = top;
+    top = top->get_next();
+    if ( !top ) {
       iterator = NULL;
-      m_bottom = NULL;
+      bottom = NULL;
     }
     delete to_delete;
     m_length--;
@@ -104,8 +104,8 @@ public:
     listElement* to_delete = iterator;
     iterator = iterator->get_next();
     if ( !iterator ) {
-      m_top = NULL;
-      m_bottom = NULL;
+      top = NULL;
+      bottom = NULL;
     }
     delete to_delete;
     m_length--;   
@@ -119,7 +119,7 @@ public:
     listElement* to_delete = iterator->get_next();
     iterator->set_next( to_delete->get_next() );
 
-    if ( to_delete == m_bottom ) m_bottom = iterator;
+    if ( to_delete == bottom ) bottom = iterator;
 
     delete to_delete;
     
@@ -130,24 +130,24 @@ public:
   // need a doubly linked list to do this properly ( currently linear time )
   // if iterator is on the bottom, set it to the new bottom
   void remove_back() {
-    if ( !m_bottom ) throw linkListException(linkListException::REMOVE_FROM_EMPTY_LIST);
+    if ( !bottom ) throw linkListException(linkListException::REMOVE_FROM_EMPTY_LIST);
 
-    listElement* to_delete = m_bottom;
+    listElement* to_delete = bottom;
 
-    listElement* elm = m_top;
+    listElement* elm = top;
     while (elm->get_next()) elm = elm->get_next();
-    m_bottom = elm;
+    bottom = elm;
     
     if ( iterator == to_delete ) iterator = elm;
-    if (m_top == to_delete ) m_top = NULL;
+    if (top == to_delete ) top = NULL;
 
     delete to_delete;
     m_length--;
   }
 
   // go to the [top, bottom, next] element
-  void top() { iterator = m_top; }
-  void bottom() { iterator = m_bottom; }
+  void goto_top() { iterator = top; }
+  void goto_bottom() { iterator = bottom; }
   bool next(){                    // true while not past the end of the list ( useful for loops )
     if ( !iterator->get_next() ) return false;
     iterator = iterator->get_next();
@@ -156,10 +156,27 @@ public:
 
   
   /**************************** access ****************************/
-  const listElement& get()        { return iterator->get_value(); }   // get value at iterator position
-  const listElement& get_top()    { return m_top->get_value(); }        // does not change iterator position
-  const listElement& get_bottom() { return m_bottom->get_value(); }     // does not change iterator position
-  unsigned int length()           { return m_length; }
+
+  // get value at iterator position
+  const T& get() {
+    if ( !m_length ) throw linkListException(linkListException::ACCESSED_EMPTY_LIST);
+    return iterator->get_value(); 
+  }
+
+  // does not change iterator position
+  const T& get_top() {
+    if ( !m_length ) throw linkListException(linkListException::ACCESSED_EMPTY_LIST);
+    return top->get_value();
+  }    
+  
+  // does not change iterator position
+  const T& get_bottom() {
+    if ( !m_length ) throw linkListException(linkListException::ACCESSED_EMPTY_LIST);
+    return bottom->get_value();
+  } 
+
+  unsigned int  length()  { return m_length; }
+  bool          empty()   { return !m_length; }
 };
 
 #endif // LINK_LIST_H
