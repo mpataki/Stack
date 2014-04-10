@@ -23,14 +23,14 @@ int main( int argc, char* argv[] ){
 
 	try {
 		cout << "- get_top throws an exception to being with" << endl;
-		llist.get_top();
+		llist.front();
 	} catch( linkListException e ){
 		assert( e.type ==linkListException::ACCESSED_EMPTY_LIST );
 	}
 
 	try {
 		cout << "- get_bottom throws an exception to being with" << endl;
-		llist.get_bottom();
+		llist.back();
 	} catch( linkListException e ){
 		assert( e.type ==linkListException::ACCESSED_EMPTY_LIST );
 	}
@@ -73,16 +73,58 @@ int main( int argc, char* argv[] ){
 	assert(	llist.length() == 1 );	
 
 	cout << "- the right value was stored in top" << endl;
-	assert(	llist.get_top() == 1 );
+	assert(	llist.front() == 1 );
 
 	cout << "- the iterator is in the right place" << endl;
 	assert(	llist.get() == 1 );	
 
 	cout << "- bottom is set correctly" << endl;
-	assert(	llist.get_bottom() == 1 );	
+	assert(	llist.back() == 1 );
 
 	cout << "- next returns false as there is only 1 value" << endl;
 	assert(	!llist.next() );
+
+	llist.remove_front();
+	cout << "- Test removing the element causes an empty list" << endl;
+	assert(	llist.empty() );
+		cout << "- Test llist starts empty" << endl;
+	assert(	llist.empty() );
+	cout << "- Test llist starts with length == 0" << endl;
+	assert(	llist.length() == 0 );
+
+	for (int i = 0; i<10; i++) llist.push_back(i);
+
+	cout << "- Test llist is now not empty" << endl;
+	assert(	!llist.empty() );
+	cout << "- Test llist has 10 values, as expected" << endl;
+	assert(	llist.length() == 10 );	
+
+	cout << "- Test that we can remove from the front" << endl;
+	assert(llist.front() == 0);
+	llist.remove_front();
+	assert(llist.front() == 1);
+	
+	cout << "- Test that we can remove from thr back" << endl;
+	assert(llist.back() == 9);
+	llist.remove_back();
+	assert(llist.back() == 8);
+	
+	cout << "- Test we now have 8 elements after removing 2" << endl;
+	assert(llist.length() == 8);
+
+	cout << "- Test we can iterate with next()" << endl;
+	for (int i=0; i<4; i++) llist.next();
+	assert(llist.get() == 5);
+	
+	cout << "- Test that we can remove form the middle (remove)" << endl;
+	llist.remove();
+	assert(llist.length() == 7);
+	assert(llist.get() == 6);
+
+	cout << "- Test that we can remove form the middle (remove after)" << endl;
+	llist.remove_after();
+	assert(llist.length() == 6);
+	assert(llist.get() == 6);
 
 	cout << endl << "TESTS FINISHED" << endl;
 	return 0;	
