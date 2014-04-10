@@ -92,37 +92,8 @@ public:
     if ( !top ) {
       iterator = NULL;
       bottom = NULL;
-    }
+    } else if ( to_delete == iterator ) iterator = top;
     delete to_delete;
-    m_length--;
-  }
-
-  // remove current iterator positon
-  void remove() {
-    if ( !iterator ) throw linkListException(linkListException::REMOVE_FROM_EMPTY_LIST);
-
-    listElement* to_delete = iterator;
-    iterator = iterator->get_next();
-    if ( !iterator ) {
-      top = NULL;
-      bottom = NULL;
-    }
-    delete to_delete;
-    m_length--;   
-  }
-
-  // remove after current iterator
-  void remove_after() {
-    if ( !iterator ) throw linkListException(linkListException::REMOVE_FROM_EMPTY_LIST);
-    if ( !iterator->get_next() ) throw linkListException(linkListException::PAST_END);
-    
-    listElement* to_delete = iterator->get_next();
-    iterator->set_next( to_delete->get_next() );
-
-    if ( to_delete == bottom ) bottom = iterator;
-
-    delete to_delete;
-    
     m_length--;
   }
 
@@ -135,23 +106,51 @@ public:
     listElement* to_delete = bottom;
 
     listElement* elm = top;
-    while (elm->get_next()) elm = elm->get_next();
+    while (elm->get_next() != to_delete) elm = elm->get_next();
     bottom = elm;
-    
+    bottom->set_next(NULL);
     if ( iterator == to_delete ) iterator = elm;
-    if (top == to_delete ) top = NULL;
+    if ( top == to_delete ) top = NULL;
 
     delete to_delete;
     m_length--;
   }
 
-  // go to the [top, bottom, next] element
-  void goto_top() { iterator = top; }
-  void goto_bottom() { iterator = bottom; }
-  bool next(){                    // true while not past the end of the list ( useful for loops )
-    if ( !iterator->get_next() ) return false;
+  // remove current iterator positon
+  void remove() {
+    if ( !iterator ) throw linkListException(linkListException::REMOVE_FROM_EMPTY_LIST);
+    if ( iterator == bottom ) return remove_back();
+    if ( iterator == top ) return remove_front();
+
+    listElement* to_delete = iterator;
     iterator = iterator->get_next();
-    return true;
+    delete to_delete;
+    m_length--;   
+  }
+
+  // remove after current iterator
+  void remove_after() {
+    if ( !iterator ) throw linkListException(linkListException::REMOVE_FROM_EMPTY_LIST);
+    if ( !iterator->get_next() ) throw linkListException(linkListException::PAST_END);
+    
+    listElement* to_delete = iterator->get_next();
+    iterator->set_next( to_delete->get_next() );
+
+    if ( to_delete == bottom ) {
+      bottom = iterator;
+      bottom->set_next(NULL);
+    }
+
+    delete to_delete;
+    
+    m_length--;
+  }
+
+  // go to the [top, bottom, next] element
+  void goto_front() { iterator = top; }
+  void goto_back() { iterator = bottom; }
+  bool next(){                    // true while not past the end of the list ( useful for loops )
+    return iterator = iterator->get_next();
   }
 
   
@@ -164,13 +163,13 @@ public:
   }
 
   // does not change iterator position
-  const T& get_top() {
+  const T& front() {
     if ( !m_length ) throw linkListException(linkListException::ACCESSED_EMPTY_LIST);
     return top->get_value();
   }    
   
   // does not change iterator position
-  const T& get_bottom() {
+  const T& back() {
     if ( !m_length ) throw linkListException(linkListException::ACCESSED_EMPTY_LIST);
     return bottom->get_value();
   } 
