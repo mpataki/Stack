@@ -92,6 +92,13 @@ public:
 		if ( left ) left->print( child_spaces );
 	}
 
+	// find the second largest element
+	int secondLargest(int second_largest){
+		if ( right ) return right->secondLargest( val );
+		if ( left ) return left->findLargest();
+		return second_largest;
+	}
+
 };
 
 int main( int argc, char* argv[] ){
@@ -115,6 +122,9 @@ int main( int argc, char* argv[] ){
 		cout << "\033[2J\033[1;1H";
 		root->print("");
 	}
+
+	// use -2147483647 is smallest int value
+	cout << "The second largest element is " << root->secondLargest(-2147483647) << endl;
 
 	root->deleteAll();
 	return 0;
