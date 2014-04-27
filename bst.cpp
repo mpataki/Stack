@@ -99,32 +99,57 @@ public:
 		return second_largest;
 	}
 
+	// count the number of edges between nodes i and j
+	// for now, assume i and j are distinct and that they exist in the tree
+	int findDistance(int i, int j){
+		if ( i > j ) { int tmp = j; j = i; i = tmp; }	// enforce i < j
+		if ( i == j ) return 0;
+		if ( i == val && right ) return right->findDistance(right->getVal(), j) + 1;
+		if ( j == val && left ) return left->findDistance(i, left->getVal()) + 1;
+		if ( i < val && j < val && left ) return left->findDistance(i, j);
+		if ( i > val && j > val && right ) return right->findDistance(i, j);
+		if ( i < val && j > val && left && right ) return left->findDistance( i, left->getVal() ) +
+																											right->findDistance( right->getVal(), j ) + 2;
+    return -1; // node doesn't exist. ( this will produce unexpected results currently. )
+	}
+
 };
 
 int main( int argc, char* argv[] ){
 	int val;
+	cout << "Enter values to be inserted into a tree. Enter -1 to stop insertion." << endl;
 	cin >> val;
 
 	Node* root = new Node(val);
-	cout << "\033[2J\033[1;1H";
+	cout << "\033[2J\033[1;1H";			// clear terminal
 	root->print("");
 
 	while (cin >> val){
 		if ( val == -1 ) break; // use -1 to start deleting
 		root->insert(val);
-		cout << "\033[2J\033[1;1H";
+		cout << "\033[2J\033[1;1H";		// clear terminal
 		root->print("");
 	}
+
+	cout << "Insertion stopped. Enter values to be removed from the tree. Enter -1 to stop removal." << endl;
 
 	while (cin >> val){
 		if ( val == -1 ) break; // break and destroy everything
 		root->remove(val);
-		cout << "\033[2J\033[1;1H";
+		cout << "\033[2J\033[1;1H";		// clear terminal
 		root->print("");
 	}
 
 	// use -2147483647 is smallest int value
 	cout << "The second largest element is " << root->secondLargest(-2147483647) << endl;
+
+	int i, j;
+	cout << "Enter a value for i: ";
+	cin >> i;
+	cout << "Enter a value for j: ";
+	cin >> j;
+	cout << "The distance between " << i << " and " << j << " is " << root->findDistance(i, j) << endl;
+
 
 	root->deleteAll();
 	return 0;
