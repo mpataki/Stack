@@ -119,24 +119,22 @@ public:
 		if ( (i != val) && (abs(i - closest) > abs(i - val)) ) closest = val;
 		
 		if ( i < val ){
-		 if (left) left->findClosest(i, closest);
-		 else return closest;
+		 	if (left) left->findClosest(i, closest);
+			return closest;
 		}
 		
 		else if ( i > val ) {
 			if (right) right->findClosest(i, closest);
-			else return closest;
+			return closest;
 		} 
 		
-		else { // i == val
-			if (left) {
-				int k = left->findLargest();
-				closest = (abs(i-k) < abs(i-closest)) ? k : closest;
-			}
-			if (right) {
-				int k = right->findSmallest();
-				closest = (abs(i-k) < abs(i-closest)) ? k : closest;
-			}
+		if (left) {
+			int k = left->findLargest();
+			closest = (abs(i-k) < abs(i-closest)) ? k : closest;
+		}
+		if (right) {
+			int k = right->findSmallest();
+			closest = (abs(i-k) < abs(i-closest)) ? k : closest;
 		}
 
 		return closest;
