@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cmath>
 
 using namespace std;
 
@@ -27,8 +28,8 @@ public:
 		return right->findLargest();
 	}
 
-	Node* findSmallest(){
-		if (left == NULL) return this;
+	int findSmallest(){
+		if (left == NULL) return val;
 		return left->findSmallest();
 	}
 
@@ -113,6 +114,34 @@ public:
     return -1; // node doesn't exist. ( this will produce unexpected results currently. )
 	}
 
+	// find the closest element
+	int findClosest(int i, int closest){
+		if ( (i != val) && (abs(i - closest) > abs(i - val)) ) closest = val;
+		
+		if ( i < val ){
+		 if (left) left->findClosest(i, closest);
+		 else return closest;
+		}
+		
+		else if ( i > val ) {
+			if (right) right->findClosest(i, closest);
+			else return closest;
+		} 
+		
+		else { // i == val
+			if (left) {
+				int k = left->findLargest();
+				closest = (abs(i-k) < abs(i-closest)) ? k : closest;
+			}
+			if (right) {
+				int k = right->findSmallest();
+				closest = (abs(i-k) < abs(i-closest)) ? k : closest;
+			}
+		}
+
+		return closest;
+	}
+
 };
 
 int main( int argc, char* argv[] ){
@@ -150,6 +179,9 @@ int main( int argc, char* argv[] ){
 	cin >> j;
 	cout << "The distance between " << i << " and " << j << " is " << root->findDistance(i, j) << endl;
 
+	cout << "Enter a value i. The closest value to i in the tree will be returned." << endl;
+	cin >> i;
+	cout << "The closest value to " << i << " is " << root->findClosest(i, 2147483647) << endl;
 
 	root->deleteAll();
 	return 0;
